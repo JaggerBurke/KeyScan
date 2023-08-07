@@ -18,6 +18,11 @@
         <item>Incoming</item>
     </string-array>
 
+    <string-array name="hello">
+        <item>GitHub</item>
+        <item>Test</item>
+    </string-array>
+
 
     /***********************************************************
     * CI Barcodes
