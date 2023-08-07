@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/success"
+        android:text="Success!"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:textColor="@color/textColor"
+        android:layout_marginTop="100dp"
+        android:gravity="center"/>
+
+    <ImageView
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:src="@drawable/check_mark"
+        android:id="@+id/checkMark"
+        android:layout_below="@+id/success"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/confirm"
+        android:text="A new equipment list was added to your Google Drive"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/textColor"
+        android:layout_below="@+id/checkMark"
+        android:gravity="center"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/returnBtn"
+        android:text="Return to Home"
+        android:textColor="@color/white"
+        android:paddingHorizontal="15dp"
+        android:background="#7db440"
+        android:textSize="18sp"
+        android:layout_below="@+id/confirm"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"/>
+
+</RelativeLayout>

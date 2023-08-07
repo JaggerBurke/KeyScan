@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:weightSum="3"
+    android:layout_width="match_parent"
+    android:layout_height="58dp">
+
+    <TextView
+        android:id="@+id/tv_lv_id"
+        android:layout_width="87dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:gravity="center|left"
+        android:paddingLeft="15dp"
+        android:text="Asset ID"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_lv_descript"
+        android:layout_width="237dp"
+        android:layout_height="58dp"
+        android:layout_weight="1"
+        android:gravity="center|left"
+        android:paddingLeft="7dp"
+        android:text="Descrption"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/removeBtn"
+        android:layout_width="71dp"
+        android:layout_height="wrap_content"
+        android:text="X" />
+
+</LinearLayout>

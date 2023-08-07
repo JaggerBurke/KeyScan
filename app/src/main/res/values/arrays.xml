@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    /***********************************************************
+    * Spinners
+    **********************************************************/
+    <string-array name="item_options">
+        <item>RE</item>
+        <item>RI</item>
+        <item>CE</item>
+        <item>CI</item>
+        <item>EFT</item>
+        <item>ESD</item>
+    </string-array>
+
+    <string-array name="cal_options">
+        <item>Outgoing</item>
+        <item>Incoming</item>
+    </string-array>
+
+
+    /***********************************************************
+    * CI Barcodes
+    **********************************************************/
+    <string-array name="CIBROWN">
+        <item>EB054</item>
+        <item>EB055</item>
+        <item>EF155</item>
+        <item>EG000</item>
+        <item>EN088</item>
+        <item>EN089</item>
+        <item>EN061</item>
+        <item>EL012</item>
+    </string-array>
+
+    <string-array name="CIGREEN">
+        <item>EB052</item>
+        <item>EB059</item>
+        <item>EF154</item>
+        <item>EG020</item>
+        <item>EN090</item>
+        <item>EN091</item>
+        <item>EN003</item>
+        <item>EL011</item>
+    </string-array>
+
+    <string-array name="CISILVER">
+        <item>EB053</item>
+        <item>EB051</item>
+        <item>EF156</item>
+        <item>EG085</item>
+        <item>EN060</item>
+        <item>EN058</item>
+        <item>EN146</item>
+        <item>EL023</item>
+    </string-array>
+
+
+    /***********************************************************
+    * RE Barcodes
+    **********************************************************/
+    <string-array name="REWHITE">
+        <item>EB062</item>
+        <item>EI009</item>
+        <item>EI014</item>
+        <item>EG072</item>
+        <item>EE076</item>
+    </string-array>
+
+    <string-array name="RERED">
+        <item>EB063</item>
+        <item>EI013</item>
+        <item>EI012</item>
+        <item>EG084</item>
+        <item>EE037</item>
+    </string-array>
+
+    <string-array name="REBLUE">
+        <item>EB064</item>
+        <item>EI011</item>
+        <item>EN005</item>
+        <item>EG074</item>
+        <item>EE100</item>
+    </string-array>
+
+
+    /***********************************************************
+    * CE Barcodes
+    **********************************************************/
+    <string-array name="CEWHITE">
+        <item>EB062</item>
+        <item>EN130</item>
+    </string-array>
+
+    <string-array name="CERED">
+        <item>EB063</item>
+        <item>EN131</item>
+    </string-array>
+
+    <string-array name="CEBLUE">
+        <item>EB064</item>
+        <item>EN132</item>
+    </string-array>
+
+
+    /***********************************************************
+    * RI Barcodes
+    **********************************************************/
+    <string-array name="RIWHITE">
+        <item>EF110</item>
+        <item>EI009</item>
+        <item>EI014</item>
+        <item>EC079</item>
+        <item>EE076</item>
+    </string-array>
+
+    <string-array name="RIRED">
+        <item>EF114</item>
+        <item>EI013</item>
+        <item>EI012</item>
+        <item>EC081</item>
+        <item>EE037</item>
+    </string-array>
+
+    <string-array name="RIBLUE">
+        <item>EF113</item>
+        <item>EI011</item>
+        <item>EN005</item>
+        <item>EC083</item>
+        <item>EE100</item>
+    </string-array>
+
+
+</resources>
