@@ -18,18 +18,6 @@
         <item>Incoming</item>
     </string-array>
 
-    <string-array name="GitTest">
-        <item>GitHub</item>
-        <item>Test</item>
-    </string-array>
-
-    <string-array name="Test_Git_2">
-        <item>GitHub</item>
-        <item>Test 2</item>
-        <item>GitHub</item>
-        <item>Test 2</item>
-    </string-array>
-
 
     /***********************************************************
     * CI Barcodes
