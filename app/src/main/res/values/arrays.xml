@@ -18,7 +18,7 @@
         <item>Incoming</item>
     </string-array>
 
-    <string-array name="hello">
+    <string-array name="GitTest">
         <item>GitHub</item>
         <item>Test</item>
     </string-array>
