@@ -54,7 +54,7 @@ public class TestingActivity extends AppCompatActivity {
     List<String> scannedList;
     private Button finishBtn;
     Button clearBtn;
-    String sheetID = "1SMbK5i-QeR9aCZYSb5IfeXxfsNYhHwTkWRzrRTEticQ";
+    String sheetID = "1Sij2xp0U9_ZYevVqGgkHvat8GYO0N3prVsCJKmnCmdg";
     String accessToken;
     ArrayList<String> listID = new ArrayList<String>();
     ArrayList<String> listDescript = new ArrayList<String>();
@@ -68,6 +68,7 @@ public class TestingActivity extends AppCompatActivity {
     ArrayList<String> listDivision = new ArrayList<String>();
     ArrayList<String> listPastDue = new ArrayList<String>();
     ProgressDialog progressDialog;
+    SharedPreferences sharedPreferences;
 
 
     /***********************************************************
@@ -82,10 +83,6 @@ public class TestingActivity extends AppCompatActivity {
         /***********************************************************
          * Local Initializations
          **********************************************************/
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-        accessToken = sharedPreferences.getString("access_token", null);
-        Log.d("TestingActivity", "Access Token: " + accessToken);
-
         AccessTokenManager accessTokenManager = new AccessTokenManager(this);
         accessTokenManager.checkAccessTokenExpiration();
 
@@ -125,8 +122,14 @@ public class TestingActivity extends AppCompatActivity {
         /***********************************************************
          * Button Clicks
          **********************************************************/
-        scanBtn.setOnClickListener(v -> scanCode());
-        inputBtn.setOnClickListener(v -> showManualInputDialog());
+        scanBtn.setOnClickListener(v -> {
+            accessTokenManager.checkAccessTokenExpiration();
+            scanCode();
+        });
+        inputBtn.setOnClickListener(v -> {
+            accessTokenManager.checkAccessTokenExpiration();
+            showManualInputDialog();
+        });
         clearBtn.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(TestingActivity.this);
             builder.setTitle("Clear All");
@@ -146,6 +149,7 @@ public class TestingActivity extends AppCompatActivity {
         });
 
         finishBtn.setOnClickListener(v -> {
+            accessTokenManager.checkAccessTokenExpiration();
             // Pass the scanned IDs to the Excel file and check for matches
             performExcelLookup();
         });
@@ -254,6 +258,8 @@ public class TestingActivity extends AppCompatActivity {
     }
 
     private Sheets createSheetsService() {
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        accessToken = sharedPreferences.getString("access_token", null);
         HttpTransport httpTransport = new NetHttpTransport();
         JsonFactory jsonFactory = new JacksonFactory();
 

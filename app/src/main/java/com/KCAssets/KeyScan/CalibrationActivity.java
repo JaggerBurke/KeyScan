@@ -56,7 +56,7 @@ public class CalibrationActivity extends AppCompatActivity implements AdapterVie
     private ScannedItemAdapter scannedListAdapter;
     private List<String> scannedList;
     private Button finishBtn;
-    String sheetID = "1SMbK5i-QeR9aCZYSb5IfeXxfsNYhHwTkWRzrRTEticQ";
+    String sheetID = "1Sij2xp0U9_ZYevVqGgkHvat8GYO0N3prVsCJKmnCmdg";
     String personName;
     String formattedDate;
     String calType;
@@ -123,10 +123,6 @@ public class CalibrationActivity extends AppCompatActivity implements AdapterVie
         scannedListAdapter = new ScannedItemAdapter(this, scannedList, prefs);
         scannedListView.setAdapter(scannedListAdapter);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-        accessToken = sharedPreferences.getString("access_token", null);
-        Log.d("CalibrationActivity", "Access Token: " + accessToken);
-
         AccessTokenManager accessTokenManager = new AccessTokenManager(this);
         accessTokenManager.checkAccessTokenExpiration();
 
@@ -145,12 +141,21 @@ public class CalibrationActivity extends AppCompatActivity implements AdapterVie
         /***********************************************************
          * Button Clicks
          **********************************************************/
-        scanBtn.setOnClickListener(v -> scanCode());
-        inputBtn.setOnClickListener(v -> showManualInputDialog());
+        scanBtn.setOnClickListener(v -> {
+            accessTokenManager.checkAccessTokenExpiration();
+            scanCode();
+        });
+        inputBtn.setOnClickListener(v -> {
+            accessTokenManager.checkAccessTokenExpiration();
+            showManualInputDialog();
+        });
 
         finishBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AccessTokenManager accessTokenManager = new AccessTokenManager(CalibrationActivity.this);
+                accessTokenManager.checkAccessTokenExpiration();
+
                 if (!scannedList.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(CalibrationActivity.this);
                     builder.setTitle("Confirmation");
@@ -425,6 +430,9 @@ public class CalibrationActivity extends AppCompatActivity implements AdapterVie
     }
 
     private Sheets createSheetsService() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        accessToken = sharedPreferences.getString("access_token", null);
+
         HttpTransport httpTransport = new NetHttpTransport();
         JsonFactory jsonFactory = new JacksonFactory();
 

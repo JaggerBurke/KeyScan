@@ -112,10 +112,6 @@ public class ConfirmActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         formattedDate = dateFormat.format(currentDate);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-        accessToken = sharedPreferences.getString("access_token", null);
-        Log.d("ConfirmActivity", "Access Token: " + accessToken);
-
         AccessTokenManager accessTokenManager = new AccessTokenManager(this);
         accessTokenManager.checkAccessTokenExpiration();
 
@@ -188,6 +184,9 @@ public class ConfirmActivity extends AppCompatActivity {
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AccessTokenManager accessTokenManager = new AccessTokenManager(ConfirmActivity.this);
+                accessTokenManager.checkAccessTokenExpiration();
+
                 if (!scannedIDs.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(ConfirmActivity.this);
                     builder.setTitle("Confirmation");
@@ -305,6 +304,9 @@ public class ConfirmActivity extends AppCompatActivity {
     }
 
     private Sheets createSheetsService() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        accessToken = sharedPreferences.getString("access_token", null);
+
         HttpTransport httpTransport = new NetHttpTransport();
         JsonFactory jsonFactory = new JacksonFactory();
 
