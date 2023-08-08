@@ -37,9 +37,6 @@ public class WelcomeActivity extends AppCompatActivity {
         calBtn = findViewById(R.id.calBtn);
         repBtn = findViewById(R.id.repBtn);
 
-        AccessTokenManager accessTokenManager = new AccessTokenManager(this);
-        accessTokenManager.checkAccessTokenExpiration();
-
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         gsc = GoogleSignIn.getClient(this,gso);
 
