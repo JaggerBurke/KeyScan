@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/assetId"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="200dp"
         android:background="@color/KeyDark"
         android:gravity="center_vertical"
         android:paddingLeft="12dp"
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="200dp"
         android:background="@color/KeyDark"
         android:gravity="center_vertical"
         android:text="Description"
@@ -36,14 +36,14 @@
         android:layout_width="match_parent"
         android:layout_height="394dp"
         android:background="@color/white"
-        android:layout_marginTop="210dp" />
+        android:layout_marginTop="230dp" />
 
     <EditText
         android:id="@+id/job"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="35dp"
-        android:layout_marginTop="104dp"
+        android:layout_marginLeft="70dp"
+        android:layout_marginTop="90dp"
         android:hint="Job Number"
         android:paddingRight="50dp"
         android:paddingLeft="10dp"
@@ -53,13 +53,35 @@
         android:imeOptions="actionDone|flagNoFullscreen"
         android:singleLine="true" />
 
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/check_mark"
+        android:layout_marginTop="95dp"
+        android:layout_marginLeft="35dp"
+        android:id="@+id/check"/>
+
+    <Button
+        android:id="@+id/folderBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="85dp"
+        android:layout_toRightOf="@+id/job"
+        android:background="@color/KeyOr"
+        android:paddingHorizontal="10dp"
+        android:text="Check Folder"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
+
     <EditText
         android:id="@+id/test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="225dp"
-        android:layout_marginTop="104dp"
-        android:hint="Test Type"
+        android:layout_marginLeft="70dp"
+        android:layout_marginTop="145dp"
+        android:hint="File Name"
         android:paddingRight="50dp"
         android:paddingLeft="10dp"
         android:textColorHint="#A6A5A5"

@@ -10,11 +10,14 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +30,9 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.SpreadsheetProperties;
@@ -34,6 +40,7 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -64,6 +71,13 @@ public class ConfirmActivity extends AppCompatActivity {
     String personName;
     String formattedDate;
     String accessToken;
+    String folderName;
+    ImageView check;
+    Button folderBtn;
+    String PREF_FOLDER = "folder";
+    private Drive driveService;
+    String progressMessage;
+    String toastMessage;
 
 
     /***********************************************************
@@ -91,7 +105,18 @@ public class ConfirmActivity extends AppCompatActivity {
         Category = getIntent().getStringArrayListExtra("Category");
         Division = getIntent().getStringArrayListExtra("Division");
         PastDue = getIntent().getStringArrayListExtra("PastDue");
+        check = findViewById(R.id.check);
+        folderBtn = findViewById(R.id.folderBtn);
         updateListView(scannedIDs, Descriptions, PastDue);
+
+        // Loading Popup Initialization
+        progressDialog = new ProgressDialog(ConfirmActivity.this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
+
+        check.setVisibility(View.INVISIBLE);
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        folderName = sharedPreferences.getString("folder", null);
 
         boolean hasPastDueAssets = checkPastDueAssets(PastDue);
         if (hasPastDueAssets) {
@@ -177,10 +202,59 @@ public class ConfirmActivity extends AppCompatActivity {
             }
         });
 
+        jobNumber.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Set the visibility of 'check' to GONE
+                check.setVisibility(View.GONE);
+                return false;
+            }
+        });
+
+        if (folderName != null) {
+
+            jobNumber.setText(folderName);
+
+            // Perform the Google Drive API task
+            progressMessage = "Searching for folder... ";
+            toastMessage = "Folder found in 'My Drive'";
+            DriveTask driveTask = new DriveTask(folderName, progressDialog, progressMessage, toastMessage);
+            driveTask.execute();
+        }
+
 
         /***********************************************************
-         * Submit Button
+         * Buttons
          **********************************************************/
+        // Set click listener for the search/create button
+        folderBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Check expiration time of access token
+                AccessTokenManager accessTokenManager = new AccessTokenManager(ConfirmActivity.this);
+                accessTokenManager.checkAccessTokenExpiration();
+
+                // Get the folder name from the EditText
+                folderName = jobNumber.getText().toString();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(PREF_FOLDER, folderName);
+                editor.apply();
+
+                // Close the keyboard
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(jobNumber.getWindowToken(), 0);
+
+                // Remove focus and cursor from the EditText
+                jobNumber.clearFocus();
+
+                // Perform the Google Drive API task
+                progressMessage = "Searching for folder... ";
+                toastMessage = "Folder found in 'My Drive'";
+                DriveTask driveTask = new DriveTask(folderName, progressDialog, progressMessage, toastMessage);
+                driveTask.execute();
+            }
+        });
+
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -194,10 +268,10 @@ public class ConfirmActivity extends AppCompatActivity {
                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (jobNumberValue != null && testTypeValue != null) {
+                            if (folderName != null && testTypeValue != null) {
                                 createEquipmentList();
                             } else {
-                                Toast.makeText(ConfirmActivity.this, "Error: Job Number or Test Type inputs are empty", Toast.LENGTH_LONG).show();
+                                Toast.makeText(ConfirmActivity.this, "Error: Job Number or File Name inputs are empty", Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -237,6 +311,7 @@ public class ConfirmActivity extends AppCompatActivity {
         submitBtn.setEnabled(false);
 
         // Show a progress dialog to indicate the operation is in progress
+        ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Creating equipment list...");
         progressDialog.setCancelable(false);
@@ -246,9 +321,8 @@ public class ConfirmActivity extends AppCompatActivity {
         new CreateEquipmentListTask().execute();
     }
 
-    private class CreateEquipmentListTask extends AsyncTask<Void, Void, String> {
+    private class CreateEquipmentListTask extends AsyncTask<Void, Void, Void> {
         private Sheets sheetsService;
-        private String spreadsheetId;
         private String databaseId;
 
         @Override
@@ -259,30 +333,21 @@ public class ConfirmActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(Void... voids) {
-            // Create a new Google Sheets spreadsheet
-            Spreadsheet spreadsheet = createSpreadsheet(sheetsService);
+        protected Void doInBackground(Void... voids) {
 
-            if (spreadsheet != null) {
-                // Get the spreadsheet ID
-                spreadsheetId = spreadsheet.getSpreadsheetId();
+            // Add data to the spreadsheet
+            List<List<Object>> data = prepareDataForSheet();
+            writeDataToSheet(sheetsService, data);
 
-                // Add data to the spreadsheet
-                List<List<Object>> data = prepareDataForSheet();
-                writeDataToSheet(sheetsService, spreadsheetId, data);
+            databaseId = "1sdWT3yQUiqbyI6_k1YhBkHXMqrl4J0hRoAm0nqWZKgI"; // Replace with your existing spreadsheet ID
+            List<List<Object>> existingData = prepareDataForDatabase();
+            writeDataToDatabase(sheetsService, databaseId, existingData);
 
-                databaseId = "1sdWT3yQUiqbyI6_k1YhBkHXMqrl4J0hRoAm0nqWZKgI"; // Replace with your existing spreadsheet ID
-                List<List<Object>> existingData = prepareDataForDatabase();
-                writeDataToDatabase(sheetsService, databaseId, existingData);
-
-                return spreadsheetId;
-            }
             return null;
         }
 
         @Override
-        protected void onPostExecute(String spreadsheetId) {
-            super.onPostExecute(spreadsheetId);
+        protected void onPostExecute(Void aVoid) {
 
             // Dismiss the progress dialog
             progressDialog.dismiss();
@@ -290,16 +355,7 @@ public class ConfirmActivity extends AppCompatActivity {
             // Enable the submit button
             submitBtn.setEnabled(true);
 
-            if (spreadsheetId != null) {
-                // Data has been successfully written to the sheet
-                // You can perform any necessary actions here, such as showing a success message
-                finish();
-                startActivity(new Intent(ConfirmActivity.this, FinishActivity.class));
-            } else {
-                // There was an error creating the sheet or writing data
-                // You can display an error message or handle the error as needed
-                Toast.makeText(ConfirmActivity.this, "Error. Check network connection and try refreshing login", Toast.LENGTH_LONG).show();
-            }
+            startActivity(new Intent(ConfirmActivity.this, FinishActivity.class));
         }
     }
 
@@ -317,16 +373,31 @@ public class ConfirmActivity extends AppCompatActivity {
                 .build();
     }
 
-    private Spreadsheet createSpreadsheet(Sheets service) {
-        Spreadsheet spreadsheet = new Spreadsheet();
-        SpreadsheetProperties properties = new SpreadsheetProperties();
-        properties.setTitle(jobNumberValue + "_" + testTypeValue + "_EquipmentList");
-        spreadsheet.setProperties(properties);
+    private Drive createDriveService() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        accessToken = sharedPreferences.getString("access_token", null);
 
-        try {
-            return service.spreadsheets().create(spreadsheet).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
+        HttpTransport httpTransport = new com.google.api.client.http.javanet.NetHttpTransport();
+        JsonFactory jsonFactory = new com.google.api.client.json.jackson2.JacksonFactory();
+
+        // Initialize Google Drive API client
+        GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
+        return new Drive.Builder(httpTransport, jsonFactory, credential)
+                .setApplicationName("KeyScan")
+                .build();
+    }
+
+    private String getFolderIdByName(String folderName) throws IOException {
+        FileList result = driveService.files().list()
+                .setQ("mimeType='application/vnd.google-apps.folder' and name='" + folderName + "'")
+                .setSpaces("drive")
+                .setFields("files(id)")
+                .execute();
+
+        List<com.google.api.services.drive.model.File> files = result.getFiles();
+        if (files != null && !files.isEmpty()) {
+            return files.get(0).getId();
+        } else {
             return null;
         }
     }
@@ -384,34 +455,49 @@ public class ConfirmActivity extends AppCompatActivity {
         return data;
     }
 
-    private void writeDataToSheet(Sheets sheetsService, String spreadsheetId, List<List<Object>> data) {
-        WriteDataToSheetTask writeTask = new WriteDataToSheetTask(sheetsService, spreadsheetId, data);
+    private void writeDataToSheet(Sheets sheetsService, List<List<Object>> data) {
+        WriteDataToSheetTask writeTask = new WriteDataToSheetTask(sheetsService, data);
         writeTask.execute();
     }
 
     private class WriteDataToSheetTask extends AsyncTask<Void, Void, Void> {
         private Sheets sheetsService;
-        private String spreadsheetId;
         private List<List<Object>> values;
 
-        public WriteDataToSheetTask(Sheets sheetsService, String spreadsheetId, List<List<Object>> values) {
+        public WriteDataToSheetTask(Sheets sheetsService, List<List<Object>> values) {
             this.sheetsService = sheetsService;
-            this.spreadsheetId = spreadsheetId;
             this.values = values;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
             try {
+                driveService = createDriveService();
+
                 // Prepare the data to be written to the sheet
                 ValueRange valueRange = new ValueRange();
                 valueRange.setValues(values);
 
-                // Perform the write operation
-                sheetsService.spreadsheets().values()
-                        .update(spreadsheetId, "Sheet1!A1", valueRange)
-                        .setValueInputOption("RAW")
-                        .execute();
+                String folderId = getFolderIdByName(folderName);
+
+                if (folderId != null) {
+                    // Create file metadata
+                    File fileMetadata = new File();
+                    fileMetadata.setParents(Collections.singletonList(folderId)); // Set the folder ID
+                    fileMetadata.setName(testTypeValue); // Set the file name
+                    fileMetadata.setMimeType("application/vnd.google-apps.spreadsheet");
+
+                    // Create the file in Google Drive
+                    File createdFile = driveService.files().create(fileMetadata).execute();
+
+                    String createdSpreadsheetId = createdFile.getId();
+
+                    // Perform the write operation using the Google Sheets API
+                    sheetsService.spreadsheets().values()
+                            .update(createdSpreadsheetId, "Sheet1!A1", valueRange)
+                            .setValueInputOption("RAW")
+                            .execute();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -470,6 +556,155 @@ public class ConfirmActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             // Update UI or perform any post-execution tasks
+        }
+    }
+
+
+    /***********************************************************
+     * Folder Check and Creation
+     **********************************************************/
+    public class DriveTask extends AsyncTask<String, Void, Boolean> {
+        private String folderInput;
+        private ProgressDialog progressDialog;
+        private boolean createFolder;
+        private String progressMessage;
+        private String toastMessage;
+
+        public DriveTask(String folderInput, ProgressDialog progressDialog, String progressMessage, String toastMessage) {
+            this.folderInput = folderInput;
+            this.progressMessage = progressMessage;
+            this.toastMessage = toastMessage;
+            this.progressDialog = progressDialog;
+            this.createFolder = false;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setMessage(progressMessage);
+            progressDialog.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            try {
+                driveService = createDriveService();
+
+                // Search for the folder by name
+                String query = "mimeType='application/vnd.google-apps.folder' and name='" + folderInput + "'";
+                FileList result = driveService.files().list().setQ(query).setSpaces("drive").execute();
+                List<File> files = result.getFiles();
+
+                // Check if the folder exists
+                if (files != null && !files.isEmpty()) {
+                    // Folder exists
+                    File folder = files.get(0);
+
+                } else {
+                    // Folder does not exist
+                    createFolder = true;
+                }
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            progressDialog.dismiss();
+            if (result) {
+                if (!createFolder) {
+                    check.setVisibility(View.VISIBLE);
+                    Toast.makeText(ConfirmActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
+                }
+
+                if (createFolder) {
+                    showCreateFolderDialog();
+                }
+            } else {
+                Toast.makeText(ConfirmActivity.this, "Error: Network connection not found.", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        private void showCreateFolderDialog() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(progressDialog.getContext());
+            builder.setMessage("This folder does not exist. Would you like to create it?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            createFolder();
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            folderName = null;
+                        }
+                    });
+
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+
+
+        /***********************************************************
+         * Create Folder if it Does not Exist
+         **********************************************************/
+        private void createFolder() {
+            ProgressDialog createFolderProgressDialog = new ProgressDialog(ConfirmActivity.this);
+            createFolderProgressDialog.setCancelable(false);
+
+            new CreateFolderTask(folderInput, createFolderProgressDialog).execute();
+        }
+
+        private class CreateFolderTask extends AsyncTask<Void, Void, Boolean> {
+            private String folderInput;
+            private ProgressDialog progressDialog;
+
+            public CreateFolderTask(String folderInput, ProgressDialog progressDialog) {
+                this.folderInput = folderInput;
+                this.progressDialog = progressDialog;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog.setMessage("Creating folder...");
+                progressDialog.show();
+            }
+
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                try {
+                    driveService = createDriveService();
+
+                    File folderMetadata = new File();
+                    folderMetadata.setName(folderInput);
+                    folderMetadata.setMimeType("application/vnd.google-apps.folder");
+
+                    File folder = driveService.files().create(folderMetadata).setFields("id").execute();
+                    System.out.println("Folder created: " + folder.getName() + " (ID: " + folder.getId() + ")");
+                    return true;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Boolean result) {
+                super.onPostExecute(result);
+                progressDialog.dismiss();
+
+                if (result) {
+                    check.setVisibility(View.VISIBLE);
+                    Toast.makeText(ConfirmActivity.this, "Folder Created in 'My Drive'", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(ConfirmActivity.this, "Error: Network connection not found.", Toast.LENGTH_LONG).show();
+                }
+            }
         }
     }
 }

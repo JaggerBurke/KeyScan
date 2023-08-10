@@ -112,7 +112,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/scanBtn"
-        android:layout_marginLeft="84dp"
+        android:layout_marginLeft="80dp"
         android:layout_marginTop="204dp"
         android:text="Clear All"
         android:textAlignment="center"
