@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/assetId"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="206dp"
         android:background="@color/KeyDark"
         android:gravity="center_vertical"
         android:paddingLeft="12dp"
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="206dp"
         android:background="@color/KeyDark"
         android:gravity="center_vertical"
         android:text="Description"
@@ -75,13 +75,36 @@
         android:textColor="@color/white"
         android:textSize="14sp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textType"
+        android:text="Test Type:"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="140dp"
+        android:textSize="15sp"
+        android:textColor="@color/textColor"
+        android:textStyle="italic" />
+
+    <Spinner
+        android:id="@+id/testSpinner"
+        style="@android:style/Widget.Material.Spinner.Underlined"
+        android:layout_width="wrap_content"
+        android:layout_height="49dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="151dp"
+        android:dropDownWidth="wrap_content"
+        android:dropDownSelector="@android:drawable/arrow_down_float"
+        android:entries="@array/test_type"
+        android:spinnerMode="dropdown" />
+
     <EditText
         android:id="@+id/test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="70dp"
-        android:layout_marginTop="145dp"
-        android:hint="File Name"
+        android:layout_marginLeft="210dp"
+        android:layout_marginTop="155dp"
+        android:hint="CUSTOM TEST"
         android:paddingRight="50dp"
         android:paddingLeft="10dp"
         android:textColorHint="#A6A5A5"

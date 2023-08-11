@@ -13,12 +13,15 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
@@ -37,6 +40,8 @@ import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.SpreadsheetProperties;
 import com.google.api.services.sheets.v4.model.ValueRange;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -78,6 +83,10 @@ public class ConfirmActivity extends AppCompatActivity {
     private Drive driveService;
     String progressMessage;
     String toastMessage;
+    Spinner testSpin;
+    String[] typeArray;
+    String selectedTest;
+    String createdSpreadsheetId;
 
 
     /***********************************************************
@@ -107,6 +116,7 @@ public class ConfirmActivity extends AppCompatActivity {
         PastDue = getIntent().getStringArrayListExtra("PastDue");
         check = findViewById(R.id.check);
         folderBtn = findViewById(R.id.folderBtn);
+        testSpin = findViewById(R.id.testSpinner);
         updateListView(scannedIDs, Descriptions, PastDue);
 
         // Loading Popup Initialization
@@ -165,6 +175,7 @@ public class ConfirmActivity extends AppCompatActivity {
          * EditTexts
          **********************************************************/
         testType = findViewById(R.id.test);
+        testType.setVisibility(View.GONE);
         testType.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -268,10 +279,18 @@ public class ConfirmActivity extends AppCompatActivity {
                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if (folderName != null && testTypeValue != null) {
-                                createEquipmentList();
+                            if (folderName != null) {
+                                if (testType.getVisibility() == View.VISIBLE) {
+                                    if (testTypeValue != null) {
+                                        createEquipmentList();
+                                    } else {
+                                        Toast.makeText(ConfirmActivity.this, "Error: CUSTOM Test Type is Empty.", Toast.LENGTH_LONG).show();
+                                    }
+                                } else {
+                                    createEquipmentList();
+                                }
                             } else {
-                                Toast.makeText(ConfirmActivity.this, "Error: Job Number or File Name inputs are empty", Toast.LENGTH_LONG).show();
+                                Toast.makeText(ConfirmActivity.this, "Error: Job Number input is empty", Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -280,6 +299,30 @@ public class ConfirmActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(ConfirmActivity.this, "Error: Asset List is Empty", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+
+        /***********************************************************
+         * Spinner
+         **********************************************************/
+        typeArray = getResources().getStringArray(R.array.test_type);
+        ArrayAdapter<String> unitAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, typeArray);
+        testSpin.setAdapter(unitAdapter);
+
+        testSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                selectedTest = testSpin.getSelectedItem().toString();
+                if (selectedTest.equals("CUSTOM")) {
+                    testType.setVisibility(View.VISIBLE);
+                } else {
+                    testType.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // Do nothing
             }
         });
     }
@@ -329,6 +372,7 @@ public class ConfirmActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             // Create the Google Sheets service
+            createdSpreadsheetId = null;
             sheetsService = createSheetsService();
         }
 
@@ -348,14 +392,6 @@ public class ConfirmActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-
-            // Dismiss the progress dialog
-            progressDialog.dismiss();
-
-            // Enable the submit button
-            submitBtn.setEnabled(true);
-
-            startActivity(new Intent(ConfirmActivity.this, FinishActivity.class));
         }
     }
 
@@ -484,19 +520,26 @@ public class ConfirmActivity extends AppCompatActivity {
                     // Create file metadata
                     File fileMetadata = new File();
                     fileMetadata.setParents(Collections.singletonList(folderId)); // Set the folder ID
-                    fileMetadata.setName(testTypeValue); // Set the file name
+
+                    if (testType.getVisibility() == View.VISIBLE) {
+                        fileMetadata.setName(testTypeValue + "_Equipment"); // Set the file name
+                    } else {
+                        fileMetadata.setName(selectedTest + "_Equipment"); // Set the file name
+                    }
+
                     fileMetadata.setMimeType("application/vnd.google-apps.spreadsheet");
 
                     // Create the file in Google Drive
                     File createdFile = driveService.files().create(fileMetadata).execute();
 
-                    String createdSpreadsheetId = createdFile.getId();
+                    createdSpreadsheetId = createdFile.getId();
 
                     // Perform the write operation using the Google Sheets API
                     sheetsService.spreadsheets().values()
                             .update(createdSpreadsheetId, "Sheet1!A1", valueRange)
                             .setValueInputOption("RAW")
                             .execute();
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -547,6 +590,7 @@ public class ConfirmActivity extends AppCompatActivity {
                         .append(spreadsheetId, appendRange, valueRange)
                         .setValueInputOption("RAW")
                         .execute();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -555,7 +599,18 @@ public class ConfirmActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            // Update UI or perform any post-execution tasks
+            if (createdSpreadsheetId != null) {
+                // Dismiss the progress dialog
+                progressDialog.dismiss();
+
+                // Enable the submit button
+                submitBtn.setEnabled(true);
+
+                startActivity(new Intent(ConfirmActivity.this, FinishActivity.class));
+
+            } else {
+                Toast.makeText(ConfirmActivity.this, "Network Error", Toast.LENGTH_LONG).show();
+            }
         }
     }
 

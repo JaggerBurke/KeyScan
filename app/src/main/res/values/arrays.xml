@@ -4,13 +4,20 @@
     /***********************************************************
     * Spinners
     **********************************************************/
-    <string-array name="item_options">
-        <item>RE</item>
-        <item>RI</item>
+    <string-array name="test_type">
+        <item>EUT</item>
         <item>CE</item>
-        <item>CI</item>
-        <item>EFT</item>
+        <item>RE</item>
+        <item>HARM_FLICK</item>
         <item>ESD</item>
+        <item>RI</item>
+        <item>EFT</item>
+        <item>SURGE</item>
+        <item>CI</item>
+        <item>MAGFIELD</item>
+        <item>DIPS</item>
+        <item>PROXMAGFIELD</item>
+        <item>CUSTOM</item>
     </string-array>
 
     <string-array name="cal_options">
