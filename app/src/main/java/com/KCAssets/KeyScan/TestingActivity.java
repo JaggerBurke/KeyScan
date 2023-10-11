@@ -54,6 +54,7 @@ public class TestingActivity extends AppCompatActivity {
     List<String> scannedList;
     private Button finishBtn;
     Button clearBtn;
+    RelativeLayout mainLayout;
     String sheetID = "1Sij2xp0U9_ZYevVqGgkHvat8GYO0N3prVsCJKmnCmdg";
     String accessToken;
     ArrayList<String> listID = new ArrayList<String>();
@@ -85,6 +86,9 @@ public class TestingActivity extends AppCompatActivity {
          **********************************************************/
         AccessTokenManager accessTokenManager = new AccessTokenManager(this);
         accessTokenManager.checkAccessTokenExpiration();
+
+        mainLayout = findViewById(R.id.main_layout);
+        mainLayout.setBackgroundColor(0xFFFFFFFF);
 
         RelativeLayout bottomBar = findViewById(R.id.bottomBar);
         bottomBar.setVisibility(View.GONE);

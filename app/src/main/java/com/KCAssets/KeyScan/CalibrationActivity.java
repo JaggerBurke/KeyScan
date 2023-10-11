@@ -11,6 +11,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -111,7 +112,11 @@ public class CalibrationActivity extends AppCompatActivity implements AdapterVie
         TextView title = findViewById(R.id.title);
 
         scanBtn = findViewById(R.id.scanBtn);
+
         scannedListView = findViewById(R.id.scannedList);
+        ViewGroup.LayoutParams layoutParams = scannedListView.getLayoutParams();
+        layoutParams.height = 600;
+
         finishBtn = findViewById(R.id.finishBtn);
         inputBtn = findViewById(R.id.inputBtn);
 

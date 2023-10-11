@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/main_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="TestingActivity"
-    android:background="@color/white">
+    tools:context="TestingActivity">
     <include layout="@layout/toolbar"/>
 
     <ListView
@@ -13,20 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="394dp"
         android:background="@color/white"
-        android:layout_marginTop="245dp"
-        android:layout_marginLeft="15dp"/>
-
-    <Spinner
-        android:id="@+id/spinnerCal"
-        style="@android:style/Widget.Material.Spinner.Underlined"
-        android:layout_width="wrap_content"
-        android:layout_height="49dp"
-        android:layout_marginTop="475dp"
-        android:dropDownWidth="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:dropDownSelector="@android:drawable/arrow_down_float"
-        android:entries="@array/cal_options"
-        android:spinnerMode="dropdown" />
+        android:paddingLeft="15dp"
+        android:layout_marginTop="245dp" />
 
     <Button
         android:id="@+id/scanBtn"
@@ -81,7 +69,6 @@
         android:textStyle="bold" />
 
 
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -92,6 +79,18 @@
         android:textColor="#A6A5A5"
         android:textStyle="italic" />
 
+    <Spinner
+        android:id="@+id/spinnerCal"
+        style="@android:style/Widget.Material.Spinner.Underlined"
+        android:layout_width="wrap_content"
+        android:layout_height="49dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="475dp"
+        android:dropDownWidth="wrap_content"
+        android:dropDownSelector="@android:drawable/arrow_down_float"
+        android:entries="@array/cal_options"
+        android:spinnerMode="dropdown" />
+
 
     <Button
         android:id="@+id/finishBtn"
@@ -99,7 +98,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="635dp"
+        android:layout_marginTop="640dp"
         android:background="@drawable/custombutton"
         android:padding="15dp"
         android:text="Finish"
