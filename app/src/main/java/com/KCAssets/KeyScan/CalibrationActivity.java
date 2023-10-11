@@ -324,14 +324,39 @@ public class CalibrationActivity extends AppCompatActivity implements AdapterVie
 
                     // Check if the ID is present in the scannedList
                     if (scannedList.contains(id)) {
-                        String descript = row.get(1).toString();
-                        String manufact = row.get(2).toString();
-                        String model = row.get(3).toString();
-                        String serial = row.get(4).toString();
-                        String caldate = row.get(5).toString();
-                        String caldatef = row.get(6).toString();
-                        String category = row.get(7).toString();
-                        String division = row.get(15).toString();
+                        String descript = "";
+                        String manufact = "";
+                        String model = "";
+                        String serial = "";
+                        String caldate = "";
+                        String caldatef = "";
+                        String category = "";
+                        String division = "";
+
+                        if (row.size() > 1) {
+                            descript = row.get(1).toString();
+                        }
+                        if (row.size() > 2) {
+                            manufact = row.get(2).toString();
+                        }
+                        if (row.size() > 3) {
+                            model = row.get(3).toString();
+                        }
+                        if (row.size() > 4) {
+                            serial = row.get(4).toString();
+                        }
+                        if (row.size() > 5) {
+                            caldate = row.get(5).toString();
+                        }
+                        if (row.size() > 6) {
+                            caldatef = row.get(6).toString();
+                        }
+                        if (row.size() > 7) {
+                            category = row.get(7).toString();
+                        }
+                        if (row.size() > 15) {
+                            division = row.get(15).toString();
+                        }
 
                         // Store the matched values in the lists
                         listID.add(id);
