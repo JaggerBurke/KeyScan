@@ -22,6 +22,7 @@ public class WelcomeActivity extends AppCompatActivity {
     Button signOutBtn;
     Button testBtn;
     Button calBtn;
+    Button envBtn;
     Button repBtn;
 
     @Override
@@ -34,6 +35,7 @@ public class WelcomeActivity extends AppCompatActivity {
         email = findViewById(R.id.email);
         signOutBtn = findViewById(R.id.signOutBtn);
         testBtn = findViewById(R.id.testBtn);
+        envBtn = findViewById(R.id.envBtn);
         calBtn = findViewById(R.id.calBtn);
         repBtn = findViewById(R.id.repBtn);
 
@@ -49,6 +51,14 @@ public class WelcomeActivity extends AppCompatActivity {
         }
 
         testBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                startActivity(new Intent(WelcomeActivity.this, TestingActivity.class));
+            }
+        });
+
+        envBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();

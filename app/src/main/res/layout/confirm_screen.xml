@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/assetId"
-        android:layout_marginTop="206dp"
+        android:layout_marginTop="285dp"
         android:background="@color/KeyDark"
         android:gravity="center_vertical"
         android:paddingLeft="12dp"
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="100dp"
-        android:layout_marginTop="206dp"
+        android:layout_marginTop="285dp"
         android:background="@color/KeyDark"
         android:gravity="center_vertical"
         android:text="Description"
@@ -34,9 +34,9 @@
     <ListView
         android:id="@+id/listview_id"
         android:layout_width="match_parent"
-        android:layout_height="394dp"
+        android:layout_height="331dp"
         android:background="@color/white"
-        android:layout_marginTop="230dp" />
+        android:layout_marginTop="309dp" />
 
     <EditText
         android:id="@+id/job"
@@ -80,19 +80,62 @@
         android:layout_height="wrap_content"
         android:id="@+id/textType"
         android:text="Test Type:"
-        android:layout_marginLeft="35dp"
+        android:layout_marginLeft="55dp"
+        android:layout_marginTop="215dp"
+        android:textSize="15sp"
+        android:textColor="@color/textColor"
+        android:textStyle="italic" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textCategory"
+        android:text="Test Category:"
+        android:layout_marginLeft="55dp"
         android:layout_marginTop="140dp"
         android:textSize="15sp"
         android:textColor="@color/textColor"
         android:textStyle="italic" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/text1"
+        android:text="1."
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="165dp"
+        android:textSize="20sp"
+        android:textColor="@color/textColor" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/text2"
+        android:text="2."
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="240dp"
+        android:textSize="20sp"
+        android:textColor="@color/textColor" />
 
     <Spinner
         android:id="@+id/testSpinner"
         style="@android:style/Widget.Material.Spinner.Underlined"
         android:layout_width="wrap_content"
         android:layout_height="49dp"
-        android:layout_marginLeft="25dp"
-        android:layout_marginTop="151dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginTop="230dp"
+        android:dropDownWidth="wrap_content"
+        android:dropDownSelector="@android:drawable/arrow_down_float"
+        android:entries="@array/test_type"
+        android:spinnerMode="dropdown" />
+
+    <Spinner
+        android:id="@+id/catSpinner"
+        style="@android:style/Widget.Material.Spinner.Underlined"
+        android:layout_width="wrap_content"
+        android:layout_height="49dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginTop="155dp"
         android:dropDownWidth="wrap_content"
         android:dropDownSelector="@android:drawable/arrow_down_float"
         android:entries="@array/test_type"
@@ -103,7 +146,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="210dp"
-        android:layout_marginTop="155dp"
+        android:layout_marginTop="235dp"
         android:hint="CUSTOM TEST"
         android:paddingRight="50dp"
         android:paddingLeft="10dp"
@@ -119,7 +162,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="625dp"
+        android:layout_marginTop="650dp"
         android:background="@drawable/custombutton"
         android:padding="15dp"
         android:text="Submit and Generate Equipment List"
