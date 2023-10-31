@@ -81,7 +81,7 @@
         android:id="@+id/textType"
         android:text="Test Type:"
         android:layout_marginLeft="55dp"
-        android:layout_marginTop="215dp"
+        android:layout_marginTop="217dp"
         android:textSize="15sp"
         android:textColor="@color/textColor"
         android:textStyle="italic" />
@@ -92,7 +92,7 @@
         android:id="@+id/textCategory"
         android:text="Test Category:"
         android:layout_marginLeft="55dp"
-        android:layout_marginTop="140dp"
+        android:layout_marginTop="144dp"
         android:textSize="15sp"
         android:textColor="@color/textColor"
         android:textStyle="italic" />
@@ -103,7 +103,7 @@
         android:id="@+id/text1"
         android:text="1."
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="165dp"
+        android:layout_marginTop="167dp"
         android:textSize="20sp"
         android:textColor="@color/textColor" />
 
@@ -130,23 +130,35 @@
         android:spinnerMode="dropdown" />
 
     <Spinner
+        android:id="@+id/testSpinner2"
+        style="@android:style/Widget.Material.Spinner.Underlined"
+        android:layout_width="wrap_content"
+        android:layout_height="49dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginTop="230dp"
+        android:dropDownWidth="wrap_content"
+        android:dropDownSelector="@android:drawable/arrow_down_float"
+        android:entries="@array/test_type2"
+        android:spinnerMode="dropdown" />
+
+    <Spinner
         android:id="@+id/catSpinner"
         style="@android:style/Widget.Material.Spinner.Underlined"
         android:layout_width="wrap_content"
         android:layout_height="49dp"
         android:layout_marginLeft="45dp"
-        android:layout_marginTop="155dp"
+        android:layout_marginTop="157dp"
         android:dropDownWidth="wrap_content"
         android:dropDownSelector="@android:drawable/arrow_down_float"
-        android:entries="@array/test_type"
+        android:entries="@array/test_category"
         android:spinnerMode="dropdown" />
 
     <EditText
         android:id="@+id/test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="210dp"
-        android:layout_marginTop="235dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginTop="234dp"
         android:hint="CUSTOM TEST"
         android:paddingRight="50dp"
         android:paddingLeft="10dp"

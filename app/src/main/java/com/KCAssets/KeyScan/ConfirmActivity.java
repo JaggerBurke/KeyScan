@@ -83,8 +83,13 @@ public class ConfirmActivity extends AppCompatActivity {
     private Drive driveService;
     String progressMessage;
     String toastMessage;
+    Spinner testCat;
     Spinner testSpin;
+    Spinner testSpin2;
+    String[] catArray;
     String[] typeArray;
+    String[] typeArray2;
+    String selectedCat;
     String selectedTest;
     String createdSpreadsheetId;
 
@@ -116,7 +121,9 @@ public class ConfirmActivity extends AppCompatActivity {
         PastDue = getIntent().getStringArrayListExtra("PastDue");
         check = findViewById(R.id.check);
         folderBtn = findViewById(R.id.folderBtn);
+        testCat = findViewById(R.id.catSpinner);
         testSpin = findViewById(R.id.testSpinner);
+        testSpin2 = findViewById(R.id.testSpinner2);
         updateListView(scannedIDs, Descriptions, PastDue);
 
         // Loading Popup Initialization
@@ -306,19 +313,62 @@ public class ConfirmActivity extends AppCompatActivity {
         /***********************************************************
          * Spinner
          **********************************************************/
+        catArray = getResources().getStringArray(R.array.test_category);
+        ArrayAdapter<String> catAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, catArray);
+        testCat.setAdapter(catAdapter);
+
         typeArray = getResources().getStringArray(R.array.test_type);
         ArrayAdapter<String> unitAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, typeArray);
         testSpin.setAdapter(unitAdapter);
+
+        typeArray2 = getResources().getStringArray(R.array.test_type2);
+        ArrayAdapter<String> unitAdapter2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, typeArray2);
+        testSpin2.setAdapter(unitAdapter2);
+
+        testCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                selectedCat = testCat.getSelectedItem().toString();
+                if (selectedCat.equals("CE MARK/FCC")) {
+                    selectedTest = testSpin.getSelectedItem().toString();
+                    testType.setVisibility(View.GONE);
+                    testSpin2.setVisibility(View.GONE);
+                    testSpin.setVisibility(View.VISIBLE);
+                }
+                if (selectedCat.equals("MIL-STD-461")) {
+                    selectedTest = testSpin2.getSelectedItem().toString();
+                    testType.setVisibility(View.GONE);
+                    testSpin.setVisibility(View.GONE);
+                    testSpin2.setVisibility(View.VISIBLE);
+                }
+                if (selectedCat.equals("CUSTOM")) {
+                    selectedTest = testSpin.getSelectedItem().toString();
+                    testSpin.setVisibility(View.GONE);
+                    testSpin2.setVisibility(View.GONE);
+                    testType.setVisibility(View.VISIBLE);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // Do nothing
+            }
+        });
 
         testSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 selectedTest = testSpin.getSelectedItem().toString();
-                if (selectedTest.equals("CUSTOM")) {
-                    testType.setVisibility(View.VISIBLE);
-                } else {
-                    testType.setVisibility(View.GONE);
-                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // Do nothing
+            }
+        });
+
+        testSpin2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                selectedTest = testSpin2.getSelectedItem().toString();
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
