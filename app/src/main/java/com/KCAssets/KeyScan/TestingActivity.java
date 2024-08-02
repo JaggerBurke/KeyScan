@@ -11,6 +11,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -192,13 +193,27 @@ public class TestingActivity extends AppCompatActivity {
         scannedListAdapter.notifyDataSetChanged();
         saveScannedIDs();
     }
-
+ 
     private void showManualInputDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Input ID exactly how it appears in asset list");
+
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
+
+        // Request focus and show the keyboard
+        input.requestFocus();
+        input.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+                }
+            }
+        }, 100);
+
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -219,13 +234,16 @@ public class TestingActivity extends AppCompatActivity {
                 }
             }
         });
+
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
-        builder.show();
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
